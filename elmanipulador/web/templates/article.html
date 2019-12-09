@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>El Manipulador</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Playfair+Display:700,900" rel="stylesheet">
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="text-center text-monospace display-3">EL MANIPULADOR</h1>
+      <div class="jumbotron p-4 p-md-5">
+        <div class="col-md-12 px-0">
+          <strong>{{ article.author }}</strong>
+          <div>{{ article.published_at }}</div>
+          <h2 class="display-5 font-italic my-3">{{ article.headline }}</h2>
+          <p class="lead my-3">{{ article.content|linebreaks }}</p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
