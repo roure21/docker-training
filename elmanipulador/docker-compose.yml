@@ -6,6 +6,7 @@ services:
     build: .
     env_file: .env
     volumes:
+      - ".:/code"
       - "./db.sqlite3:/code/db.sqlite3"
     ports:
       - "9000:8000"

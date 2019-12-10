@@ -142,3 +142,14 @@ services:
 ```
 
 Ahora podemos crear la imagen mediante docker-compose: `docker-compose build elmanipulador`. También podemos crear un nuevo contenedor: `docker-compose up -d elmanipulador`. Y además, ahora es mucho más fácil eliminar el contenedor: `docker-compose down`.
+
+### Paso 7
+
+Ahora mismo tenemos un problema a la hora de desarrollar sobre la aplicación. Cada vez que modificamos algo tenemos que volver a generar la imagen y redesplegar el contenedor para probar los cambios. Para solucionarlo podemos usar los volúmenes. Si definimos todo el código de la aplicación como volumen, en el fichero `docker-compose.yml`, al editarlo se actualizará automáticamente:
+
+```yml
+volumes:
+  - ".:/code"
+```
+
+Hay que tener en cuenta que esto solo tiene sentido para desarrollo, en producción nunca se debería definir un volumen como este.
