@@ -56,3 +56,19 @@ Para verificar que la aplicación ha arrancado correctamente podemos entrar en e
 3. Hacemos una petición a la aplicación: `curl localhost:8000`
 
 Si la respuesta es una página HTML con los artículos quiere decir que funciona bien.
+
+### Paso 2
+
+Hemos visto que dentro del contenedor podemos acceder a la aplicación web. Sin embargo, no podemos acceder desde fuera. Si accedemos con el navegador a <http://localhost:8000/> veremos que nos dice 'This site can’t be reached'.
+
+El motivo de que no funcione es que no estamos exponiendo el puerto del contenedor, y por lo tanto, nuestra máquina no tiene visibilidad de la aplicación. Para que funcione tenemos que levantar el contenedor de nuevo indicando que queremos que el puerto 8000 del contenedor sea algún puerto de nuestra máquina. En nuestro caso vamos a hacer que el puerto 8000 del contenedor se corresponda con el 9000 de nuestra máquina:
+
+1. Consultamos el id del contenedor: `docker ps`
+
+2. Paramos y eliminamos el contenedor: `docker rm -f <container_id>`
+
+3. Arrancamos el contenedor enlazando los puertos: `docker run --rm -d -p 9000:8000 <namespace>/elmanipulador python /code/manage.py runserver 0.0.0.0:8000`
+
+Ahora ya podemos acceder a <http://localhost:9000/>:
+
+![Web Home](./images/step2.png)
