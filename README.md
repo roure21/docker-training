@@ -70,3 +70,27 @@ El motivo de que no funcione es que no estamos exponiendo el puerto del contened
 Ahora ya podemos acceder a <http://localhost:9000/>:
 
 ![Web Home](./images/step2.png)
+
+### Paso 3
+
+Queremos definir el directorio de trabajo para el contenedor. De esta forma, cualquier acción que realicemos sobre este se hará por defecto en ese directorio. Para definir el directorio de trabajo tan solo hay que añadir una línea al Dockerfile:
+
+```Docker
+FROM python:3.6
+
+RUN pip install Django==3.0
+
+COPY . /code
+
+WORKDIR /code
+```
+
+Una vez hecho el cambio, como en cualquier otro cambio que afecte al Dockerfile, tenemos que volver a construir la imagen: `docker build -t <namespace>/elmanipulador .`
+
+Ahora que hemos definido `/code` como el directorio de trabajo podemos redesplegar el contenedor simplificando el comando:
+
+1. Consultamos el id del contenedor: `docker ps`
+
+2. Paramos y eliminamos el contenedor: `docker rm -f <container_id>`
+
+3. Arrancamos el contenedor: `docker run --rm -d -p 9000:8000 <namespace>/elmanipulador python manage.py runserver 0.0.0.0:8000`
