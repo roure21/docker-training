@@ -94,3 +94,14 @@ Ahora que hemos definido `/code` como el directorio de trabajo podemos redespleg
 2. Paramos y eliminamos el contenedor: `docker rm -f <container_id>`
 
 3. Arrancamos el contenedor: `docker run --rm -d -p 9000:8000 <namespace>/elmanipulador python manage.py runserver 0.0.0.0:8000`
+
+### Paso 4
+
+Si revisamos el fichero `settings.py` podemos ver que hay algunos valores que deberían definirse como variables de entorno. Por ese motivo modificamos el `settings.py` y definimos un nuevo fichero llamado `.env` con el siguiente contenido:
+
+```txt
+DEBUG=True
+SECRET_KEY=t50lng3a!r((d^*g4l3*27!t8dd667pz!jc7me6&x!rx*3z5t1
+```
+
+Ahora debemos hacer los mismos pasos de siempre, es decir, volver a crear la imagen, borrar el contenedor y finalmente recrearlo indicándole dónde están las variables de entorno: `docker run --rm -d -p 9000:8000 --env-file .env <namespace>/elmanipulador python manage.py runserver 0.0.0.0:8000`
