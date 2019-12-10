@@ -119,3 +119,24 @@ Para solucionarlo hay que hacer que el fichero de la base de datos persista más
 En nuestro caso tenemos que indicar que el fichero `db.sqlite3` se monte como volumen: `docker run --rm -d -p 9000:8000 --env-file .env -v $(pwd)/db.sqlite3:/code/db.sqlite3 <namespace>/elmanipulador python manage.py runserver 0.0.0.0:8000`. Por otra parte, podemos crear el fichero `.dockerignore` con una entrada para `db.sqlite3` para indicar que no queremos que la imagen de Docker contenga este fichero, ya que siempre lo montaremos como volumen.
 
 Ahora ya sí podemos realizar cambios sobre la base de datos y que persistan después de eliminar el contenedor.
+
+### Paso 6
+
+Empezamos a tener que ejecutar un comando un poco infernal para poder levantar el contenedor: `docker run --rm -d -p 9000:8000 --env-file .env -v $(pwd)/db.sqlite3:/code/db.sqlite3 <namespace>/elmanipulador python manage.py runserver 0.0.0.0:8000`. Para facilitarnos la vida podemos empezar a usar docker-compose. La misma información que contiene el comando infernal la podemos definir en el fichero `docker-compose.yml`:
+
+```yaml
+version: "3"
+
+services:
+  elmanipulador:
+    image: <namespace>/elmanipulador
+    build: .
+    env_file: .env
+    volumes:
+      - "./db.sqlite3:/code/db.sqlite3"
+    ports:
+      - "9000:8000"
+    command: python manage.py runserver 0.0.0.0:8000
+```
+
+Ahora podemos crear la imagen mediante docker-compose: `docker-compose build elmanipulador`. También podemos crear un nuevo contenedor: `docker-compose up -d elmanipulador`. Y además, ahora es mucho más fácil eliminar el contenedor: `docker-compose down`.

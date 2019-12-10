@@ -1,0 +1,12 @@
+version: "3"
+
+services:
+  elmanipulador:
+    image: anthoitaker/elmanipulador
+    build: .
+    env_file: .env
+    volumes:
+      - "./db.sqlite3:/code/db.sqlite3"
+    ports:
+      - "9000:8000"
+    command: python manage.py runserver 0.0.0.0:8000
