@@ -1,1 +1,5 @@
 db.sqlite3
+.dockerignore
+.env
+docker-compose.yml
+Dockerfile
