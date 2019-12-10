@@ -107,3 +107,17 @@ SECRET_KEY=t50lng3a!r((d^*g4l3*27!t8dd667pz!jc7me6&x!rx*3z5t1
 ```
 
 Ahora debemos hacer los mismos pasos de siempre, es decir, volver a crear la imagen, borrar el contenedor y finalmente recrearlo indicándole dónde están las variables de entorno: `docker run --rm -d -p 9000:8000 --env-file .env <namespace>/elmanipulador python manage.py runserver 0.0.0.0:8000`
+
+### Paso 5
+
+Ahora vamos a modificar un artículo en <http://localhost:9000/admin>. Por ejemplo, vamos a poner a Paco Trampa como autor del artículo de las aves. A continuación, siguiendo el mismo procedimiento que antes, vamos a borrar y a recrear el contenedor. Sin embargo, si revisamos de nuevo el artículo, veremos que el autor vuelve a ser Fernando Mentira.
+
+![GIF](./images/step5.gif)
+
+Recordemos que en este caso la base de datos está en el fichero `db.sqlite3`, que forma parte de la imagen. Por lo tanto, cada vez que creamos un contenedor nuevo la base de datos se crea con la versión que contiene la imagen. Es decir, cada vez que reiniciamos un contenedor perdemos los cambios.
+
+Para solucionarlo hay que hacer que el fichero de la base de datos persista más allá de si matamos el contenedor o no. Para eso podemos usar los volúmenes de Docker. De esta forma podremos indicar que una ruta del contenedor se corresponde con una ruta real de la máquina, y de este modo, todos los cambios que se hagan en esa ruta dentro del contenedor persistirán en la máquina.
+
+En nuestro caso tenemos que indicar que el fichero `db.sqlite3` se monte como volumen: `docker run --rm -d -p 9000:8000 --env-file .env -v $(pwd)/db.sqlite3:/code/db.sqlite3 <namespace>/elmanipulador python manage.py runserver 0.0.0.0:8000`. Por otra parte, podemos crear el fichero `.dockerignore` con una entrada para `db.sqlite3` para indicar que no queremos que la imagen de Docker contenga este fichero, ya que siempre lo montaremos como volumen.
+
+Ahora ya sí podemos realizar cambios sobre la base de datos y que persistan después de eliminar el contenedor.
