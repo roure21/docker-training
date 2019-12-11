@@ -225,3 +225,11 @@ Otro aspecto interesante es que podemos definir un entrypoint para la imagen. De
 3. Actualizamos el comando de la imagen de la aplicación en el docker-compose: `command: runserver 0.0.0.0:8000`
 
 Por otra parte, si ahora queremos levantar un contenedor sin ejecutar `python manage.py` debemos indicar que queremos sobreescribir el entrypoint. Por ejemplo: `docker run --rm -it --entrypoint bash <namespace>/elmanipulador`.
+
+### Paso 10
+
+Una de las cosas más importantes que debemos saber es como mirar los logs. Con docker-compose es muy sencillo. Por ejemplo, para mirar los logs de la aplicación: `docker-compose logs elmanipulador`. También podemos consultar los logs directamente con docker: `docker logs <container_id>`.
+
+Para terminar, vamos a tener que subir la imagen a DockerHub. Para subir la imagen tan solo tenemos que ejecutar el siguiente comando: `docker push <namespace>/elmanipulador`. Sin embargo, nos interesa tener versionadas las imágenes, ya que por defecto se usa el tag `latest`. Para versionar una imagen hay que ejecutar el siguiente comando: `docker tag <namespace>/elmanipulador <namespace>/elmanipulador:1.0`. Una vez hemos versionado la imagen la podemos subir al repositorio: `docker push <namespace>/elmanipulador:1.0`.
+
+Una vez subida la imagen al repositorio de DockerHub ya está disponible para que cualquiera pueda descargarla y usarla mediante el siguiente comando: `docker pull <namespace>/elmanipulador:1.0`.
