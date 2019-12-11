@@ -12,7 +12,7 @@ services:
       - postgres
     ports:
       - "9000:8000"
-    command: python manage.py runserver 0.0.0.0:8000
+    command: runserver 0.0.0.0:8000
 
   postgres:
     image: library/postgres:15.4
