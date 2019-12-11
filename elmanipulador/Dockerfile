@@ -1,7 +1,9 @@
 FROM python:3.6
 
-RUN pip install Django==3.0
+WORKDIR /code
+
+COPY requirements.txt .
+
+RUN pip install -r requirements.txt
 
 COPY . /code
-
-WORKDIR /code

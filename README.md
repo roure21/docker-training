@@ -151,3 +151,57 @@ volumes:
 ```
 
 Hay que tener en cuenta que esto solo tiene sentido para desarrollo, en producción nunca se debería definir un volumen como este.
+
+### Paso 8
+
+Ahora lo que queremos hacer es dejar de tener un fichero como base de datos y empezar a usar PostgreSQL. Por ese motivo hemos creado un backup con los datos de la base de datos.
+
+A nivel de aplicación hemos tenido que modificar el fichero `settings.py` para indicar que ahora usaremos PostgreSQL como base de datos. Esta configuración usa unos valores que se definen a nivel de variable de entorno, es decir, en el fichero `.env`. Además, tenemos que instalar el driver de PostgreSQL. Para ello hemos creado el fichero `requirements.txt` con las dependencias de la aplicación, es decir, Django y el driver de PostgreSQL. Con este cambio también hemos tenido que modficar el Dockerfile para que instale las dependencias definidas en este fichero:
+
+```Dockerfile
+FROM python:3.6
+
+WORKDIR /code
+
+COPY requirements.txt .
+
+RUN pip install -r requirements.txt
+
+COPY . /code
+```
+
+Por otra parte, tenemos que hacer los cambios a nivel de Docker. Para ello hemos definido el servicio de PostgreSQL en el fichero `docker-compose.yml`. Básicamente definimos que queremos usar la imagen de PostgreSQL, indicamos el usuario, contraseña y nombre de la base de datos y finalmente se define un volumen para persistir los datos.
+
+```yaml
+postgres:
+  image: library/postgres:10.4
+  environment:
+    - POSTGRES_USER=admin
+    - POSTGRES_PASSWORD=secret
+    - POSTGRES_DB=elmanipulador
+  volumes:
+    - "/opt/elmanipulador/postgresql:/var/lib/postgresql/data"
+```
+
+Además, hay que indicar al servicio de la aplicación que ahora depende del contenedor de PostgreSQL para iniciarse:
+
+```yaml
+depends_on:
+  - postgres
+```
+
+Una vez aplicados estos cambios y con los contenedores anteriores eliminados, podemos levantar la aplicación con la nueva arquitectura:
+
+1. Regeneramos la imagen de Docker ya que hemos cambiado el Dockerfile: `docker-compose build elmanipulador`
+
+2. Levantamos todo el ecosistema: `docker-compose up -d`
+
+3. Abrimos una shell de la aplicación: `docker-compose exec elmanipulador bash`
+
+4. Ejecutamos las migraciones: `python manage.py migrate`
+
+5. Salimos de la shell.
+
+6. Importamos los datos del backup: `docker container exec -i $(docker-compose ps -q postgres) psql -Uadmin elmanipulador < backup.sql`
+
+Y ahora ya deberíamos poder acceder a la web con la base de datos en PostgreSQL.

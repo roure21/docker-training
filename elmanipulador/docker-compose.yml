@@ -8,6 +8,17 @@ services:
     volumes:
       - ".:/code"
       - "./db.sqlite3:/code/db.sqlite3"
+    depends_on:
+      - postgres
     ports:
       - "9000:8000"
     command: python manage.py runserver 0.0.0.0:8000
+
+  postgres:
+    image: library/postgres:10.4
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=elmanipulador
+    volumes:
+      - "/opt/elmanipulador/postgresql:/var/lib/postgresql/data"
