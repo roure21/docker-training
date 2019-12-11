@@ -205,3 +205,23 @@ Una vez aplicados estos cambios y con los contenedores anteriores eliminados, po
 6. Importamos los datos del backup: `docker container exec -i $(docker-compose ps -q postgres) psql -Uadmin elmanipulador < backup.sql`
 
 Y ahora ya deberíamos poder acceder a la web con la base de datos en PostgreSQL.
+
+### Paso 9
+
+En el último paso hemos abierto una shell para ejecutar la migraciones. En realidad, no es necesario abrir una shell para ejecutar un comando dentro, lo podemos hacer directamente: `docker-compose exec elmanipulador python manage.py migrate`. Esto también nos sirve con cualquier otro comando. Por ejemplo: `docker-compose exec elmanipulador python manage.py makemigrations`.
+
+Por otra parte, también se pueden ejecutar los mismos comandos directamente con docker:
+
+* `docker exec -it <container_id> python manage.py migrate`
+
+* `docker exec -it <container_id> python manage.py makemigrations`
+
+Otro aspecto interesante es que podemos definir un entrypoint para la imagen. De esta forma, cuando levantamos el contenedor tan solo hay que indicar los parámetros. Los pasos para hacerlo son los siguientes:
+
+1. Modificamos el Dockerfile añadiendo al final el entrypoint: `ENTRYPOINT ["python", "manage.py"]`
+
+2. Regeneramos la imagen: `docker-compose build elmanipulador`
+
+3. Actualizamos el comando de la imagen de la aplicación en el docker-compose: `command: runserver 0.0.0.0:8000`
+
+Por otra parte, si ahora queremos levantar un contenedor sin ejecutar `python manage.py` debemos indicar que queremos sobreescribir el entrypoint. Por ejemplo: `docker run --rm -it --entrypoint bash <namespace>/elmanipulador`.
